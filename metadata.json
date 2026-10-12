@@ -1,0 +1,6 @@
+{
+  "name": "PaPip - Video Sharing Platform",
+  "description": "Watch. Create. Share. An original mobile-first video platform with real video playback, uploads, shorts, and creator channels.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

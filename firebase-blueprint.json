@@ -1,0 +1,148 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with channel metadata and statistics",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "handle": { "type": "string", "maxLength": 50, "pattern": "^@[a-zA-Z0-9_]{3,30}$" },
+        "email": { "type": "string", "maxLength": 150 },
+        "avatarUrl": { "type": "string", "maxLength": 1024 },
+        "bannerUrl": { "type": "string", "maxLength": 1024 },
+        "bio": { "type": "string", "maxLength": 1000 },
+        "subscribersCount": { "type": "number" },
+        "isVerified": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "handle", "email"]
+    },
+    "Video": {
+      "title": "Video",
+      "description": "Video publication metadata, streaming URL, and analytics",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200, "minLength": 3 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "videoUrl": { "type": "string", "maxLength": 2048 },
+        "thumbnailUrl": { "type": "string", "maxLength": 2048 },
+        "duration": { "type": "number" },
+        "views": { "type": "number" },
+        "likesCount": { "type": "number" },
+        "dislikesCount": { "type": "number" },
+        "creatorId": { "type": "string", "maxLength": 128 },
+        "creatorName": { "type": "string", "maxLength": 100 },
+        "creatorHandle": { "type": "string", "maxLength": 50 },
+        "creatorAvatar": { "type": "string", "maxLength": 1024 },
+        "category": { "type": "string", "maxLength": 50 },
+        "visibility": { "type": "string", "enum": ["public", "unlisted", "private"] },
+        "isShort": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "title", "videoUrl", "creatorId", "visibility"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "User discussion comment on a video",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "videoId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userName": { "type": "string", "maxLength": 100 },
+        "userHandle": { "type": "string", "maxLength": 50 },
+        "userAvatar": { "type": "string", "maxLength": 1024 },
+        "content": { "type": "string", "maxLength": 2000, "minLength": 1 },
+        "likesCount": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "videoId", "userId", "content"]
+    },
+    "Like": {
+      "title": "Like",
+      "description": "Video reaction record",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "videoId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["like", "dislike"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "videoId", "type"]
+    },
+    "Subscription": {
+      "title": "Subscription",
+      "description": "Channel follower relation",
+      "type": "object",
+      "properties": {
+        "subscriberId": { "type": "string", "maxLength": 128 },
+        "channelId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["subscriberId", "channelId"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "User event notification alert",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "recipientId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "maxLength": 30 },
+        "title": { "type": "string", "maxLength": 150 },
+        "message": { "type": "string", "maxLength": 500 },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "recipientId", "title", "message"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "Safety and abuse flag report",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "reporterId": { "type": "string", "maxLength": 128 },
+        "targetType": { "type": "string", "enum": ["video", "comment", "channel"] },
+        "targetId": { "type": "string", "maxLength": 128 },
+        "reason": { "type": "string", "maxLength": 100 },
+        "details": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "reviewed"] }
+      },
+      "required": ["id", "reporterId", "targetType", "targetId", "reason"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Public channel profiles"
+    },
+    "/videos/{videoId}": {
+      "schema": { "$ref": "#/entities/Video" },
+      "description": "Video catalog documents"
+    },
+    "/videos/{videoId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Discussions under videos"
+    },
+    "/likes/{likeId}": {
+      "schema": { "$ref": "#/entities/Like" },
+      "description": "Likes and reactions"
+    },
+    "/subscriptions/{subId}": {
+      "schema": { "$ref": "#/entities/Subscription" },
+      "description": "Channel subscription relationships"
+    },
+    "/notifications/{notifId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "In-app notifications for users"
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/Report" },
+      "description": "Abuse and moderation reports"
+    }
+  }
+}
